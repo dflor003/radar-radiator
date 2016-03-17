@@ -1,0 +1,24 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+
+# Webstorm files
+.idea
+
+# Dependency directory
+node_modules
+
+# Typings
+typings/**/*.d.ts
+!typings/tsd.d.ts
+!typings/custom/**/*.d.ts
+
+# Compiled JS files
+src/**/*.js
+src/**/*.js.map

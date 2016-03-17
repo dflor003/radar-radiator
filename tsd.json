@@ -1,0 +1,60 @@
+{
+  "version": "v4",
+  "repo": "borisyankov/DefinitelyTyped",
+  "ref": "master",
+  "path": "typings",
+  "bundle": "typings/tsd.d.ts",
+  "installed": {
+    "express-serve-static-core/express-serve-static-core.d.ts": {
+      "commit": "2f47c75835b837777a85287611703d683b0aaa83"
+    },
+    "serve-static/serve-static.d.ts": {
+      "commit": "2f47c75835b837777a85287611703d683b0aaa83"
+    },
+    "body-parser/body-parser.d.ts": {
+      "commit": "2f47c75835b837777a85287611703d683b0aaa83"
+    },
+    "express/express.d.ts": {
+      "commit": "2f47c75835b837777a85287611703d683b0aaa83"
+    },
+    "mime/mime.d.ts": {
+      "commit": "2f47c75835b837777a85287611703d683b0aaa83"
+    },
+    "serve-favicon/serve-favicon.d.ts": {
+      "commit": "2f47c75835b837777a85287611703d683b0aaa83"
+    },
+    "socket.io/socket.io.d.ts": {
+      "commit": "2f47c75835b837777a85287611703d683b0aaa83"
+    },
+    "debug/debug.d.ts": {
+      "commit": "2f47c75835b837777a85287611703d683b0aaa83"
+    },
+    "node/node.d.ts": {
+      "commit": "2f47c75835b837777a85287611703d683b0aaa83"
+    },
+    "morgan/morgan.d.ts": {
+      "commit": "2f47c75835b837777a85287611703d683b0aaa83"
+    },
+    "less-middleware/less-middleware.d.ts": {
+      "commit": "2f47c75835b837777a85287611703d683b0aaa83"
+    },
+    "node-uuid/node-uuid-cjs.d.ts": {
+      "commit": "2f47c75835b837777a85287611703d683b0aaa83"
+    },
+    "node-uuid/node-uuid-base.d.ts": {
+      "commit": "2f47c75835b837777a85287611703d683b0aaa83"
+    },
+    "node-uuid/node-uuid.d.ts": {
+      "commit": "2f47c75835b837777a85287611703d683b0aaa83"
+    },
+    "linq/linq.3.0.3-Beta4.d.ts": {
+      "commit": "4f7b7e01d3a9622bfab0bef469e169529e60c66b"
+    },
+    "moment/moment-node.d.ts": {
+      "commit": "cc3d223a946f661eff871787edeb0fcb8f0db156"
+    },
+    "moment/moment.d.ts": {
+      "commit": "cc3d223a946f661eff871787edeb0fcb8f0db156"
+    }
+  }
+}
