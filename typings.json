@@ -1,0 +1,22 @@
+{
+  "name": "radar",
+  "version": false,
+  "ambientDependencies": {
+    "body-parser": "registry:dt/body-parser#0.0.0+20160317120654",
+    "debug": "registry:dt/debug#0.0.0+20160317120654",
+    "express": "registry:dt/express#4.0.0+20160317120654",
+    "express-serve-static-core": "registry:dt/express-serve-static-core#0.0.0+20160317120654",
+    "less-middleware": "registry:dt/less-middleware#2.0.1+20160316155526",
+    "mime": "registry:dt/mime#0.0.0+20160316155526",
+    "moment-node": "registry:dt/moment-node#2.11.1+20160317120654",
+    "morgan": "registry:dt/morgan#1.2.2+20160317120654",
+    "node": "registry:dt/node#4.0.0+20160317120654",
+    "serve-favicon": "registry:dt/serve-favicon#0.0.0+20160316155526",
+    "serve-static": "registry:dt/serve-static#0.0.0+20160317120654",
+    "socket.io": "registry:dt/socket.io#1.4.4+20160317120654"
+  },
+  "dependencies": {
+    "linq": "github:schungx/LINQ-to-TypeScript/linq3.d.ts#00e59dd57f245b268382e945c7a614927f747503",
+    "node-uuid": "registry:npm/node-uuid#1.4.0+20160224202522"
+  }
+}

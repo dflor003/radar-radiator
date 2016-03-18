@@ -1,7 +1,7 @@
 import {Router, Request, Response} from 'express';
 import {TrackingSetRepository} from '../persistence/tracking-set-repository';
 import * as express from 'express';
-import {TrackingSet} from "../domain/tracking-set";
+import {ServiceGroup} from '../domain/service-group';
 import {ServiceState} from "../domain/service-state";
 
 export class ServiceTrackingSetApi {
@@ -30,9 +30,9 @@ export class ServiceTrackingSetApi {
     }
 }
 
-function toTrackingSetDto(trackingSet: TrackingSet): Object {
+function toServiceGroupDto(group: ServiceGroup): Object {
     return {
-        name: trackingSet.name,
-        status: ServiceState[trackingSet.overallState()],
+        name: group.name,
+        status: ServiceState[group.overallState()],
     };
 }

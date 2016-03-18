@@ -1,7 +1,5 @@
 import {ServiceState} from './service-state';
 import {Validate} from '../common/validator';
-import * as moment from 'moment';
-import Moment = moment.Moment;
 
 export class Service {
     name: string;

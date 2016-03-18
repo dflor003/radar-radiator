@@ -4,7 +4,7 @@ import {Validate} from '../common/validator';
 import {Utils} from '../common/utils';
 import * as Enumerable from 'linq';
 
-export class TrackingSet {
+export class ServiceGroup {
     private services: Service[] = [];
     private id: string;
 
