@@ -1,13 +1,13 @@
 import {Router, Request, Response} from 'express';
-import {TrackingSetRepository} from '../persistence/tracking-set-repository';
+import {ServiceGroupRepo} from '../persistence/service-group-repo';
 import * as express from 'express';
 import {ServiceGroup} from '../domain/service-group';
 import {ServiceState} from "../domain/service-state";
 
-export class ServiceTrackingSetApi {
-    private repo: TrackingSetRepository;
+export class ServiceGroupApi {
+    private repo: ServiceGroupRepo;
 
-    constructor(repo: TrackingSetRepository = new TrackingSetRepository()) {
+    constructor(repo: ServiceGroupRepo = new ServiceGroupRepo()) {
         this.repo = repo;
     }
 

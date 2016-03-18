@@ -16,7 +16,7 @@
     "socket.io": "registry:dt/socket.io#1.4.4+20160317120654"
   },
   "dependencies": {
-    "linq": "github:schungx/LINQ-to-TypeScript/linq3.d.ts#00e59dd57f245b268382e945c7a614927f747503",
+    "linq": "github:dflor003/typed-linq",
     "node-uuid": "registry:npm/node-uuid#1.4.0+20160224202522"
   }
 }

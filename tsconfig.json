@@ -8,6 +8,8 @@
     "node_modules",
     "views",
     "public/lib",
-    "public/assets"
+    "public/assets",
+    "typings/browser",
+    "typings/browser.d.ts"
   ]
 }
