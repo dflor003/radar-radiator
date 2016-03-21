@@ -10,8 +10,7 @@ export class ServiceGroup {
 
     name: string;
 
-    constructor(name: string) {
-        this.name = Validate.notEmpty(name, 'Name is required');
+    constructor() {
         this.id = Utils.uuid();
     }
 
