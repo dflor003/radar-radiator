@@ -4,7 +4,7 @@ import {ServiceGroup} from '../domain/service-group';
 import {ServiceState} from '../domain/service-state';
 import {HttpStatus} from '../common/http-status';
 import {CreateServiceGroupCommand} from '../domain/commands/create-service-group-cmd';
-import {CommandBus} from '../cmd-handlers/command-bus';
+import {CommandBus} from '../infrastructure/cqrs/index';
 import * as express from 'express';
 
 export class ServiceGroupQueryApi {

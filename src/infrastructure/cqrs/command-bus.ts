@@ -1,7 +1,7 @@
-import {Command} from '../domain/commands/command';
+import {Command} from './command';
 import {EventEmitter} from 'events';
 import {CommandHandlerRegistry} from "./command-registry";
-import {Validate} from '../common/validator';
+import {Validate} from '../../common/validator';
 
 export class CommandBus extends EventEmitter {
     private static _instance: CommandBus;

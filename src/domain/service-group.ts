@@ -1,4 +1,5 @@
 import {ServiceState} from './service-state';
+import {DomainEvent, EventStream} from '../infrastructure/cqrs/index';
 import {Service} from './service';
 import {Validate} from '../common/validator';
 import {Utils} from '../common/utils';
@@ -7,11 +8,20 @@ import * as Enumerable from 'linq';
 export class ServiceGroup {
     private services: Service[] = [];
     private id: string;
+    private evtStream: EventStream;
 
     name: string;
 
-    constructor() {
-        this.id = Utils.uuid();
+    constructor(evtStream: EventStream = new EventStream()) {
+        this.evtStream = evtStream;
+    }
+
+    static new(name: string): EventStream {
+        let group = new ServiceGroup();
+        name = Validate.notEmpty(name, 'Name is required');
+        applyEvents(group, [
+            new ServiceGroupCreated(Utils.uuid())
+        ]);
     }
 
     getId(): string {

@@ -24,7 +24,7 @@ function start(workingDir?: string): void {
 
     // Configuration
     app.disable('etag'); // Disables etags for JSON requests
-    app.use(favicon(workingDir + '/public/assets/favicon.ico'));
+    // app.use(favicon(workingDir + '/public/assets/favicon.ico'));
     app.use(logger('dev'));
     app.use(lessMiddleware(path.join(workingDir, 'public'), {
         force: true,

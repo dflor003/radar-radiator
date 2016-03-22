@@ -1,6 +1,6 @@
-import {Validate} from '../common/validator';
-import {Command} from '../domain/commands/command';
-import {BaseEvent} from '../domain/events/base-event';
+import {Validate} from '../../common/validator';
+import {Command} from './command';
+import {DomainEvent} from './base-event';
 
 export abstract class CommandHandler {
     private commandTypeHandled: string;
@@ -17,5 +17,5 @@ export abstract class CommandHandler {
         return this.commandTypeHandled === cmdName;
     }
 
-    async abstract handle<TCommand extends Command>(command: TCommand): Promise<BaseEvent[]>;
+    async abstract handle<TCommand extends Command>(command: TCommand): Promise<DomainEvent[]>;
 }

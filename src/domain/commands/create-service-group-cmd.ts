@@ -1,4 +1,4 @@
-import {Command} from './command';
+import {Command} from '../../infrastructure/cqrs/index';
 import {Validate} from '../../common/validator';
 
 export class CreateServiceGroupCommand extends Command {

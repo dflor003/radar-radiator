@@ -2,14 +2,16 @@ import {Utils} from '../../common/utils';
 import * as moment from 'moment';
 import Moment = moment.Moment;
 
-export abstract class BaseEvent {
+export abstract class DomainEvent {
     private id: string;
     private createdAt: Moment;
 
-    constructor() {
+    constructor(name: string) {
         this.id = Utils.uuid();
         this.createdAt = moment();
     }
+
+    abstract getType(): string;
 
     getId(): string {
         return this.id;
