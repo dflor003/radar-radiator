@@ -1,4 +1,4 @@
-import {CommandHandler, Command, DomainEvent} from '../infrastructure/cqrs/index';
+import {CommandHandler, Command, IDomainEvent} from '../infrastructure/cqrs/index';
 import {CreateServiceGroupCommand} from '../domain/commands/create-service-group-cmd';
 
 export class CreateServiceGroupHandler extends CommandHandler {
@@ -6,7 +6,7 @@ export class CreateServiceGroupHandler extends CommandHandler {
         super(CreateServiceGroupCommand.name)
     }
 
-    handle<TCommand extends Command>(command: TCommand): Promise<DomainEvent[]> {
+    handle<TCommand extends Command>(command: TCommand): Promise<IDomainEvent[]> {
         return undefined;
     }
 }

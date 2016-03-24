@@ -3,6 +3,7 @@
   "version": false,
   "ambientDependencies": {
     "body-parser": "registry:dt/body-parser#0.0.0+20160317120654",
+    "colors": "registry:dt/colors#0.6.0-1+20160317120654",
     "debug": "registry:dt/debug#0.0.0+20160317120654",
     "express": "registry:dt/express#4.0.0+20160317120654",
     "express-serve-static-core": "registry:dt/express-serve-static-core#0.0.0+20160317120654",

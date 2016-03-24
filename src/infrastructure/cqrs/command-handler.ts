@@ -1,21 +1,21 @@
 import {Validate} from '../../common/validator';
 import {Command} from './command';
-import {DomainEvent} from './domain-event';
+import {IDomainEvent} from './domain-event';
 
 export abstract class CommandHandler {
-    private commandTypeHandled: string;
+    private _commandTypeHandled: string;
 
     constructor(commandTypeHandled: string) {
-        this.commandTypeHandled = Validate.notEmpty(commandTypeHandled, 'Command handler missing type handled');
+        this._commandTypeHandled = Validate.notEmpty(commandTypeHandled, 'Command handler missing type handled');
     }
 
     getCommandTypeName(): string {
-        return this.commandTypeHandled;
+        return this._commandTypeHandled;
     }
 
     handles(cmdName: string): boolean {
-        return this.commandTypeHandled === cmdName;
+        return this._commandTypeHandled === cmdName;
     }
 
-    async abstract handle<TCommand extends Command>(command: TCommand): Promise<DomainEvent[]>;
+    async abstract handle<TCommand extends Command>(command: TCommand): Promise<IDomainEvent<any>[]>;
 }

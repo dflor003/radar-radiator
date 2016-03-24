@@ -5,6 +5,9 @@ import {Validate} from '../../common/validator';
 
 export class CommandBus extends EventEmitter {
     private static _instance: CommandBus;
+    static EventsGeneratedEvent = 'events-generated';
+    static ErrorEvent = 'error';
+
 
     constructor(){
         super();
@@ -25,10 +28,10 @@ export class CommandBus extends EventEmitter {
             let events = await handler.handle(command);
 
             // Emit those events to consumers
-            this.emit('events-generated', events);
+            this.emit(CommandBus.EventsGeneratedEvent, events);
         } catch(err) {
             // Emit error if one is thrown
-            this.emit('error', err);
+            this.emit(CommandBus.ErrorEvent, err);
         }
     }
 }

@@ -1,11 +1,11 @@
-import {DomainEvent} from '../../infrastructure/cqrs/index';
+import {IDomainEvent} from '../../infrastructure/cqrs/index';
 
-export class ServiceGroupCreated extends DomainEvent {
+export class ServiceGroupCreated extends IDomainEvent {
     private name: string;
     private id: string;
 
     constructor(name: string, id: string) {
-        super();
+        super(id);
         this.name = name;
         this.id = id;
     }
