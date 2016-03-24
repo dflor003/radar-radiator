@@ -1,6 +1,6 @@
 import {Validate} from '../../common/validator';
 import {Command} from './command';
-import {DomainEvent} from './base-event';
+import {DomainEvent} from './domain-event';
 
 export abstract class CommandHandler {
     private commandTypeHandled: string;

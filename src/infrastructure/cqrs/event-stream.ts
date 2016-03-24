@@ -12,8 +12,29 @@ export class EventStream {
         }
     }
 
-    publishEvent(event: DomainEvent) {
-        this.events.push(event);
+    applyTo(entity: Object): this {
+        return this.applyEvents(entity, ...this.events);
+    }
+
+    applyEvents(entity: Object, ...events: DomainEvent[]): this {
+        for(let event of events){
+            let eventType = event.getEventType(),
+                handlerName = `on${eventType}`;
+
+            if (!entity.hasOwnProperty(handlerName) || typeof entity[handlerName] !== 'function') {
+                throw new Error(`Entity missing handler for event type '${eventType}'. Implement method '${handlerName}' on entity.`);
+            }
+
+            entity[handlerName].call(entity, event);
+        }
+        return this;
+    }
+
+    publishEvents(entity: Object, ...events: DomainEvent[]): this {
+        this.applyEvents(entity, ...events);
+        this.events.push(...events);
+
+        return this;
     }
 
     getEvents(): DomainEvent[] {

@@ -14,7 +14,7 @@ export class ServiceGroupRepo {
     }
 
     update(trackingSet: ServiceGroup): void {
-        let index = this.groups.findIndex(set => set.getId() === trackingSet.getId());
+        let index = this.groups.findIndex(grp => grp.getId() === trackingSet.getId());
         if (index < 0) {
             throw new NotFoundError(`No tracking set with id ${trackingSet.getId()}`)
         }
@@ -23,7 +23,7 @@ export class ServiceGroupRepo {
     }
 
     delete(id: string): ServiceGroup {
-        let index = this.groups.findIndex(set => set.getId() === id);
+        let index = this.groups.findIndex(grp => grp.getId() === id);
         let item  = this.groups[index];
         if (index >= 0) {
             this.groups.splice(index, 1);

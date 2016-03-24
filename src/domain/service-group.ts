@@ -1,39 +1,46 @@
+import {EventStream} from '../infrastructure/cqrs/index';
 import {ServiceState} from './service-state';
-import {DomainEvent, EventStream} from '../infrastructure/cqrs/index';
 import {Service} from './service';
 import {Validate} from '../common/validator';
 import {Utils} from '../common/utils';
+import {ServiceGroupCreated} from './events/service-group-created';
 import * as Enumerable from 'linq';
 
 export class ServiceGroup {
+    private evtStream: EventStream;
     private services: Service[] = [];
     private id: string;
-    private evtStream: EventStream;
+    private name: string;
 
-    name: string;
+    constructor(evtStream: EventStream) {
+        if (!evtStream) {
+            throw new Error('No event stream passed')
+        }
 
-    constructor(evtStream: EventStream = new EventStream()) {
         this.evtStream = evtStream;
+        this.evtStream.applyTo(this);
     }
 
-    static new(name: string): EventStream {
-        let group = new ServiceGroup();
+    static new(name: string): ServiceGroup {
+        let evtStream = new EventStream(),
+            group = new ServiceGroup(evtStream);
+
         name = Validate.notEmpty(name, 'Name is required');
-        applyEvents(group, [
-            new ServiceGroupCreated(Utils.uuid())
-        ]);
+        evtStream.publishEvents(group, new ServiceGroupCreated(name, Utils.uuid()));
+
+        return group;
     }
 
     getId(): string {
         return this.id;
     }
 
-    getServices(): Service[] {
-        return this.services;
+    getName(): string {
+        return this.name;
     }
 
-    lastChecked(): Date {
-        return null;
+    getServices(): Service[] {
+        return this.services;
     }
 
     overallState(): ServiceState {
@@ -54,5 +61,10 @@ export class ServiceGroup {
         }
 
         return ServiceState.Running;
+    }
+
+    private onServiceGroupCreated(evt: ServiceGroupCreated): void {
+        this.id = evt.getId();
+        this.name = evt.getName();
     }
 }
