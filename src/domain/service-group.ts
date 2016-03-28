@@ -3,8 +3,16 @@ import {ServiceState} from './service-state';
 import {Service} from './service';
 import {Validate} from '../common/validator';
 import {Utils} from '../common/utils';
-import {ServiceGroupCreated} from './events/service-group-created';
 import * as Enumerable from 'linq';
+
+export const Events = {
+    ServiceGroupCreated: 'ServiceGroupCreated',
+};
+
+export interface ServiceGroupCreated {
+    id: string;
+    name: string;
+}
 
 export class ServiceGroup {
     private evtStream: EventStream;
@@ -26,9 +34,16 @@ export class ServiceGroup {
             group = new ServiceGroup(evtStream);
 
         name = Validate.notEmpty(name, 'Name is required');
-        evtStream.publishEvents(group, new ServiceGroupCreated(name, Utils.uuid()));
+        evtStream.publishEvent(group, Events.ServiceGroupCreated, {
+            id: Utils.uuid(),
+            name: name
+        });
 
         return group;
+    }
+
+    getEvtStream(): EventStream {
+        return this.evtStream;
     }
 
     getId(): string {
@@ -64,7 +79,7 @@ export class ServiceGroup {
     }
 
     private onServiceGroupCreated(evt: ServiceGroupCreated): void {
-        this.id = evt.getId();
-        this.name = evt.getName();
+        this.id = evt.id;
+        this.name = evt.name;
     }
 }

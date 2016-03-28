@@ -3,7 +3,7 @@
 import * as express from 'express';
 import * as favicon from 'serve-favicon';
 import * as path from 'path';
-import * as logger from 'morgan';
+import * as morgan from 'morgan';
 import * as debug from 'debug';
 import * as http from 'http';
 import * as bodyParser from 'body-parser';
@@ -11,6 +11,12 @@ import * as socketIo from 'socket.io';
 import * as uuid from 'node-uuid';
 import lessMiddleware = require('less-middleware');
 import {Request, Response} from 'express';
+import {Utils} from './common/utils';
+import {esManager} from './infrastructure/cqrs/event-sourcing-manager';
+import {CreateServiceGroupHandler} from './cmd-handlers/create-service-group-handler';
+import {ServiceGroupCreatedListener} from './evt-listeners/service-group-created-listener';
+import {ServiceGroupCommandApi, ServiceGroupQueryApi} from './api/service-group-api';
+import {logger} from './common/logger';
 
 function start(workingDir?: string): void {
     workingDir = workingDir || __dirname;
@@ -25,7 +31,7 @@ function start(workingDir?: string): void {
     // Configuration
     app.disable('etag'); // Disables etags for JSON requests
     // app.use(favicon(workingDir + '/public/assets/favicon.ico'));
-    app.use(logger('dev'));
+    app.use(morgan('dev', { stream: logger.toStream() }));
     app.use(lessMiddleware(path.join(workingDir, 'public'), {
         force: true,
         debug: true,
@@ -33,11 +39,25 @@ function start(workingDir?: string): void {
     app.use(bodyParser.json());
     app.use(express.static(path.join(workingDir, 'public'), { etag: true }));
 
+    // Initialize Event Sourcing infrastructure;
+    esManager.start({
+        commandHandlers: [
+            new CreateServiceGroupHandler()
+        ],
+        eventListeners: [
+            new ServiceGroupCreatedListener()
+        ]
+    });
+
     // Main SPA route
     app.get('/', (req: Request, res: Response) => res.render('layout', {}));
 
     // APIs
-
+    let controllers = [
+        new ServiceGroupCommandApi(),
+        new ServiceGroupQueryApi(),
+    ];
+    controllers.forEach(ctrl => app.use(ctrl.routes()));
 
     // Error handlers
     app.use((req: Request, res: Response, next: Function) => {
@@ -48,7 +68,7 @@ function start(workingDir?: string): void {
     });
 
     app.use((err: Error, req: Request, res: Response) => {
-        let errorId =  uuid.v4();
+        let errorId = Utils.uuid();
         res.status(err['status'] || 500);
         res.render('error', {
             id: errorId,

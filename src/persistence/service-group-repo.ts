@@ -1,29 +1,29 @@
-import {ServiceGroup} from '../domain/service-group';
 import {NotFoundError} from '../common/errors/not-found-error';
 import * as Enumerable from 'linq';
+import {IServiceGroup} from '../read-model/service-group';
 
 export class ServiceGroupRepo {
-    private groups: ServiceGroup[] = [];
+    private groups: IServiceGroup[] = [];
 
     constructor() {
     }
 
-    create(trackingSet: ServiceGroup): ServiceGroup {
-        this.groups.push(trackingSet);
-        return trackingSet;
+    create(group: IServiceGroup): IServiceGroup {
+        this.groups.push(group);
+        return group;
     }
 
-    update(trackingSet: ServiceGroup): void {
-        let index = this.groups.findIndex(grp => grp.getId() === trackingSet.getId());
+    update(group: IServiceGroup): void {
+        let index = this.groups.findIndex(grp => grp.id === group.id);
         if (index < 0) {
-            throw new NotFoundError(`No tracking set with id ${trackingSet.getId()}`)
+            throw new NotFoundError(`No tracking set with id ${group.id}`)
         }
 
-        this.groups[index] = trackingSet;
+        this.groups[index] = group;
     }
 
-    delete(id: string): ServiceGroup {
-        let index = this.groups.findIndex(grp => grp.getId() === id);
+    delete(id: string): IServiceGroup {
+        let index = this.groups.findIndex(grp => grp.id === id);
         let item  = this.groups[index];
         if (index >= 0) {
             this.groups.splice(index, 1);
@@ -32,13 +32,13 @@ export class ServiceGroupRepo {
         return item || null;
     }
 
-    getAll(): ServiceGroup[] {
+    getAll(): IServiceGroup[] {
         return this.groups;
     }
 
-    getById(id: string): ServiceGroup {
+    getById(id: string): IServiceGroup {
         return Enumerable
             .from(this.groups)
-            .firstOrDefault(group => group.getId() == id, null);
+            .firstOrDefault(group => group.id == id, null);
     }
 }

@@ -1,5 +1,8 @@
 import {IDomainEvent} from './domain-event';
+import {Validate} from '../../common/validator';
 import * as Enumerable from 'linq';
+import * as moment from 'moment';
+import {Utils} from '../../common/utils';
 
 export class EventStream {
     private events: IDomainEvent<any>[] = [];
@@ -17,31 +20,44 @@ export class EventStream {
     }
 
     applyEvents(entity: Object, ...events: IDomainEvent<any>[]): this {
-        for(let event of events){
-            let eventType = event.entityType,
+        for (let event of events) {
+            let eventType = event.eventType,
                 handlerName = `on${eventType}`;
 
-            if (!entity.hasOwnProperty(handlerName) || typeof entity[handlerName] !== 'function') {
+            if (typeof entity[handlerName] !== 'function') {
                 throw new Error(`Entity missing handler for event type '${eventType}'. Implement method '${handlerName}' on entity.`);
             }
 
-            entity[handlerName].call(entity, event);
+            entity[handlerName].call(entity, event.data);
         }
         return this;
     }
 
-    publishEvents(entity: Object, ...events: IDomainEvent<any>[]): this {
-        this.applyEvents(entity, ...events);
-        this.events.push(...events);
+    publishEvent<TEvent>(entity: Object, eventType: string, payload: TEvent): this {
+        Validate.notNull(entity);
+        Validate.notEmpty(eventType);
+        Validate.notNull(payload);
+
+        let event: IDomainEvent<TEvent> = {
+            entityId: null,
+            entityType: entity.constructor.name,
+            eventId: Utils.uuid(),
+            createdAt: moment().utc().toDate(),
+            eventType: eventType,
+            data: payload
+        };
+
+        this.applyEvents(entity, event);
+        event.entityId = this.getEntityId(entity);
 
         return this;
     }
 
-    getEvents(): IDomainEvent[] {
+    getEvents(): IDomainEvent<any>[] {
         return this.events;
     }
 
-    getNewEvents(): IDomainEvent[] {
+    getNewEvents(): IDomainEvent<any>[] {
         let indexOfLastStored = this.lastStoredEventIndex;
         if (indexOfLastStored < 0) {
             return this.getEvents();
@@ -50,5 +66,17 @@ export class EventStream {
             .from(this.events)
             .where((evt, index) => index > indexOfLastStored)
             .toArray();
+    }
+
+    private getEntityId(entity: Object): string {
+        if (typeof entity['getId'] === 'function') {
+            return entity['getId'].call(entity);
+        }
+
+        if (entity && entity.constructor && typeof entity.constructor['getEntityId'] === 'function') {
+            return entity.constructor['getEntityId'](entity);
+        }
+
+        throw new Error('Could not get id for entity!')
     }
 }

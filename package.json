@@ -7,7 +7,7 @@
     "clean": "rm -rf ./src/**/*.js",
     "typings": "rm -rf typings && typings install",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node ./src/server.js"
+    "start": "node --harmony_destructuring --harmony_default_parameters --harmony_rest_parameters ./src/server.js"
   },
   "repository": {
     "type": "git",

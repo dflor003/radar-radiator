@@ -17,5 +17,5 @@ export abstract class CommandHandler {
         return this._commandTypeHandled === cmdName;
     }
 
-    async abstract handle<TCommand extends Command>(command: TCommand): Promise<IDomainEvent<any>[]>;
+    abstract handle<TCommand extends Command>(command: TCommand): Promise<IDomainEvent<any>[]>;
 }

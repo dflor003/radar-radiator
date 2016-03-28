@@ -21,6 +21,11 @@ export class CommandHandlerRegistry {
         return handler;
     }
 
+    registerHandlers(...handlers: CommandHandler[]): this {
+        handlers.forEach(handler => this.register(handler));
+        return this;
+    }
+
     register(handler: CommandHandler): this {
         let otherHandlerExists = Enumerable
             .from(this.handlers)
