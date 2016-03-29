@@ -9,12 +9,12 @@ import lessMiddleware = require('less-middleware');
 import {Request, Response} from 'express';
 import {Utils} from './common/utils';
 import {esManager} from './infrastructure/cqrs/event-sourcing-manager';
-import {CreateServiceGroupHandler, CreateServiceGroupCommand} from './cmd-handlers/create-service-group-handler';
 import {ServiceGroupModelListener} from './evt-listeners/service-group-model-listener';
 import {ServiceGroupCommandApi, ServiceGroupQueryApi} from './api/service-group-api';
 import {logger} from './common/logger';
-import {AddServiceHandler, AddServiceCommand} from './cmd-handlers/add-service-handler';
 import {ServiceGroup} from './domain/service-group';
+import {CreateServiceGroupHandler, AddServiceHandler} from './cmd-handlers/service-group-handlers';
+import {ServiceGroupCommands} from './cmd-handlers/service-group-commands';
 
 function start(workingDir?: string): void {
     workingDir = workingDir || __dirname;
@@ -44,8 +44,8 @@ function start(workingDir?: string): void {
         .configure(registry => {
             let serviceGroupListener = new ServiceGroupModelListener();
             registry
-                .command(CreateServiceGroupCommand.name).handledBy(new CreateServiceGroupHandler())
-                .command(AddServiceCommand.name).handledBy(new AddServiceHandler())
+                .command(ServiceGroupCommands.CreateServiceGroup).handledBy(new CreateServiceGroupHandler())
+                .command(ServiceGroupCommands.AddService).handledBy(new AddServiceHandler())
                 .event(ServiceGroup.Events.ServiceGroupCreated).triggers(evt => serviceGroupListener.handleCreated(evt))
                 .event(ServiceGroup.Events.ServiceAdded).triggers(evt => serviceGroupListener.handleServiceAdded(evt));
         })

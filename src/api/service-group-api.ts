@@ -4,8 +4,8 @@ import {HttpStatus} from '../common/http-status';
 import {CommandBus} from '../infrastructure/cqrs/index';
 import {RequestHandler} from 'express';
 import {NextFunction} from 'express';
-import {CreateServiceGroupCommand} from '../cmd-handlers/create-service-group-handler';
 import {IServiceGroup} from '../evt-listeners/service-group-model-listener';
+import {ServiceGroupCommands, ICreateServiceGroupCommand} from '../cmd-handlers/service-group-commands';
 import * as express from 'express';
 
 function handleErrors(handler: RequestHandler): RequestHandler {
@@ -54,18 +54,19 @@ export class ServiceGroupCommandApi {
     routes(): Router {
         let router = express.Router();
 
-        router.post('/api/service-groups', handleErrors((req, res, next) => this.createServiceGroup(req, res, next)));
+        router.post('/api/service-groups', handleErrors((req, res) => this.createServiceGroup(req, res)));
 
         return router;
     }
 
-    async createServiceGroup(req: Request, res: Response, next: Function): Promise<void> {
+    async createServiceGroup(req: Request, res: Response): Promise<void> {
         let body = req.body || {},
             name = body.name;
 
-        let cmd = new CreateServiceGroupCommand(name);
-        await this.bus.processCommand(cmd);
-        res.send(HttpStatus.Accepted, null);
+        await this.bus.process<ICreateServiceGroupCommand>(ServiceGroupCommands.CreateServiceGroup, {
+            name: name
+        });
+        res.status(HttpStatus.Accepted).send(null);
     }
 }
 

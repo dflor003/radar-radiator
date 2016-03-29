@@ -1,5 +1,3 @@
-import {CommandHandler} from './command-handler';
-import {IEventListener} from './event-handler';
 import {CommandBus} from './command-bus';
 import {Registry} from './registry';
 import {EventDispatcher} from './event-dispatcher';

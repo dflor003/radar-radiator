@@ -1,4 +1,3 @@
-import {Command} from './command';
 import {EventEmitter} from 'events';
 import {Registry} from './registry';
 import {Validate} from '../../common/validator';
@@ -21,27 +20,28 @@ export class CommandBus extends EventEmitter {
         return CommandBus._instance || (CommandBus._instance = new CommandBus());
     }
 
-    async processCommand(command: Command): Promise<void> {
-        command = Validate.notNull(command, 'No command passed');
+    async process<TCommand extends Object>(commandType: string, data: TCommand): Promise<void> {
+        commandType = Validate.notEmpty(commandType, 'No command name passed');
+        data = Validate.notNull(data, 'No command passed');
 
         // Get handler for command
-        logger.trace(`Processing command '${command.commandType}'`);
-        let handler = Registry.instance.getHandler(command.commandType);
+        logger.trace(`Processing command '${commandType}'`);
+        let handler = Registry.instance.getHandler(commandType);
 
         try {
             // Handle the command and capture any events it yields
-            let events = await handler.handle(command);
+            let events = await handler.handle(data);
 
             // Usually processing commands yields at least one event. Warn if not the case.
             if (!events.length && this.warnOnNoEvents) {
-                logger.warn(`WARNING! Command '${command.commandType}' yielded no events!`)
+                logger.warn(`WARNING! Command '${commandType}' yielded no events!`)
             }
 
             // Emit those events to consumers
             this.emit(CommandBus.Events.EventsGenerated, events);
         } catch(err) {
             // Emit error if one is thrown
-            logger.error(`Failed processing command '${command.commandType}'`, err);
+            logger.error(`Failed processing command '${commandType}'`, err);
             this.emit(CommandBus.Events.Error, err);
             throw err;
         }
