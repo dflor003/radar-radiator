@@ -1,12 +1,12 @@
 import {Router, Request, Response} from 'express';
 import {ServiceGroupRepo} from '../persistence/service-group-repo';
 import {HttpStatus} from '../common/http-status';
-import {CreateServiceGroupCommand} from '../domain/commands/create-service-group-cmd';
 import {CommandBus} from '../infrastructure/cqrs/index';
-import {IServiceGroup} from '../read-model/service-group';
-import * as express from 'express';
 import {RequestHandler} from 'express';
 import {NextFunction} from 'express';
+import {CreateServiceGroupCommand} from '../cmd-handlers/create-service-group-handler';
+import {IServiceGroup} from '../evt-listeners/service-group-model-listener';
+import * as express from 'express';
 
 function handleErrors(handler: RequestHandler): RequestHandler {
     return async (req: Request, res: Response, next: NextFunction): Promise<void> => {

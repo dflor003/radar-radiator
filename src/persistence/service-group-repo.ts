@@ -1,6 +1,6 @@
 import {NotFoundError} from '../common/errors/not-found-error';
+import {IServiceGroup} from '../evt-listeners/service-group-model-listener';
 import * as Enumerable from 'linq';
-import {IServiceGroup} from '../read-model/service-group';
 
 const inMemoryGroups: IServiceGroup[] = []
 

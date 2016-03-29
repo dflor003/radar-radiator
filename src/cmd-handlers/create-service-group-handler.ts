@@ -1,6 +1,16 @@
 import {CommandHandler, IDomainEvent} from '../infrastructure/cqrs/index';
-import {CreateServiceGroupCommand} from '../domain/commands/create-service-group-cmd';
 import {ServiceGroup} from '../domain/service-group';
+import {Command} from '../infrastructure/cqrs/command';
+import {Validate} from '../common/validator';
+
+export class CreateServiceGroupCommand extends Command {
+    name: string;
+
+    constructor(name: string) {
+        super();
+        this.name = Validate.notEmpty(name, 'name is required');
+    }
+}
 
 export class CreateServiceGroupHandler extends CommandHandler {
     constructor() {

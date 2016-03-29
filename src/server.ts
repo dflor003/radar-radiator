@@ -9,10 +9,12 @@ import lessMiddleware = require('less-middleware');
 import {Request, Response} from 'express';
 import {Utils} from './common/utils';
 import {esManager} from './infrastructure/cqrs/event-sourcing-manager';
-import {CreateServiceGroupHandler} from './cmd-handlers/create-service-group-handler';
-import {ServiceGroupCreatedListener} from './evt-listeners/service-group-created-listener';
+import {CreateServiceGroupHandler, CreateServiceGroupCommand} from './cmd-handlers/create-service-group-handler';
+import {ServiceGroupModelListener} from './evt-listeners/service-group-model-listener';
 import {ServiceGroupCommandApi, ServiceGroupQueryApi} from './api/service-group-api';
 import {logger} from './common/logger';
+import {AddServiceHandler, AddServiceCommand} from './cmd-handlers/add-service-handler';
+import {ServiceGroup} from './domain/service-group';
 
 function start(workingDir?: string): void {
     workingDir = workingDir || __dirname;
@@ -37,15 +39,17 @@ function start(workingDir?: string): void {
     app.use(bodyParser.json());
     app.use(express.static(path.join(workingDir, 'public'), { etag: true }));
 
-    // Initialize Event Sourcing infrastructure;
-    esManager.start({
-        commandHandlers: [
-            new CreateServiceGroupHandler()
-        ],
-        eventListeners: [
-            new ServiceGroupCreatedListener()
-        ]
-    });
+    // Initialize Event Sourcing infrastructure
+    esManager
+        .configure(registry => {
+            let serviceGroupListener = new ServiceGroupModelListener();
+            registry
+                .command(CreateServiceGroupCommand.name).handledBy(new CreateServiceGroupHandler())
+                .command(AddServiceCommand.name).handledBy(new AddServiceHandler())
+                .event(ServiceGroup.Events.ServiceGroupCreated).triggers(evt => serviceGroupListener.handleCreated(evt))
+                .event(ServiceGroup.Events.ServiceAdded).triggers(evt => serviceGroupListener.handleServiceAdded(evt));
+        })
+        .start();
 
     // Main SPA route
     app.get('/', (req: Request, res: Response) => res.render('layout', {}));

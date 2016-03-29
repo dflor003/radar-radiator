@@ -5,13 +5,20 @@ import {Validate} from '../common/validator';
 import {Utils} from '../common/utils';
 import * as Enumerable from 'linq';
 
-export const Events = {
+const Events = {
     ServiceGroupCreated: 'ServiceGroupCreated',
+    ServiceAdded: 'ServiceAdded'
 };
 
-export interface ServiceGroupCreated {
+export interface ServiceGroupCreatedEvent {
     id: string;
     name: string;
+}
+
+export interface ServiceAddedEvent {
+    id: string;
+    name: string;
+    url: string;
 }
 
 export class ServiceGroup {
@@ -19,6 +26,8 @@ export class ServiceGroup {
     private services: Service[] = [];
     private id: string;
     private name: string;
+
+    static Events = Events;
 
     constructor(evtStream: EventStream) {
         if (!evtStream) {
@@ -33,10 +42,9 @@ export class ServiceGroup {
         let evtStream = new EventStream(),
             group = new ServiceGroup(evtStream);
 
-        name = Validate.notEmpty(name, 'Name is required');
-        evtStream.publishEvent(group, Events.ServiceGroupCreated, {
+        evtStream.publishEvent<ServiceGroupCreatedEvent>(group, Events.ServiceGroupCreated, {
             id: Utils.uuid(),
-            name: name
+            name: Validate.notEmpty(name, 'Service group name is required')
         });
 
         return group;
@@ -78,7 +86,15 @@ export class ServiceGroup {
         return ServiceState.Running;
     }
 
-    private onServiceGroupCreated(evt: ServiceGroupCreated): void {
+    addService(name: string, url: string): void {
+        this.evtStream.publishEvent<ServiceAddedEvent>(this, Events.ServiceAdded, {
+            id: Utils.uuid(),
+            name: Validate.notEmpty(name, 'Service name is required'),
+            url: Validate.isValidUri(url, 'Service url must be a valid absolute URL')
+        });
+    }
+
+    private onServiceGroupCreated(evt: ServiceGroupCreatedEvent): void {
         this.id = evt.id;
         this.name = evt.name;
     }

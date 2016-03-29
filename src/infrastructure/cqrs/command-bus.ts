@@ -1,6 +1,6 @@
 import {Command} from './command';
 import {EventEmitter} from 'events';
-import {CommandHandlerRegistry} from './command-registry';
+import {Registry} from './registry';
 import {Validate} from '../../common/validator';
 import {logger as mainLogger} from '../../common/logger';
 
@@ -26,7 +26,7 @@ export class CommandBus extends EventEmitter {
 
         // Get handler for command
         logger.trace(`Processing command '${command.commandType}'`);
-        let handler = CommandHandlerRegistry.instance.getHandler(command.commandType);
+        let handler = Registry.instance.getHandler(command.commandType);
 
         try {
             // Handle the command and capture any events it yields

@@ -1,4 +1,4 @@
-export abstract class Command {
+export abstract class  Command {
     private constructorName: string;
 
     constructor() {
