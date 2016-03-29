@@ -34,10 +34,12 @@ export class EventStream {
     }
 
     publishEvent<TEvent>(entity: Object, eventType: string, payload: TEvent): this {
+        // Error checks
         Validate.notNull(entity);
         Validate.notEmpty(eventType);
         Validate.notNull(payload);
 
+        // Build the event object
         let event: IDomainEvent<TEvent> = {
             entityId: null,
             entityType: entity.constructor.name,
@@ -47,7 +49,11 @@ export class EventStream {
             data: payload
         };
 
+        // Apply it to the entity and store the event
         this.applyEvents(entity, event);
+        this.events.push(event);
+
+        // Set the entity id last as it may have been set as part of the application of the event
         event.entityId = this.getEntityId(entity);
 
         return this;

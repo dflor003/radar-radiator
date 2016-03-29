@@ -64,7 +64,6 @@ export class ServiceGroupCommandApi {
             name = body.name;
 
         let cmd = new CreateServiceGroupCommand(name);
-        console.log('here');
         await this.bus.processCommand(cmd);
         res.send(HttpStatus.Accepted, null);
     }

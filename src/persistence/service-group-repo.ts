@@ -2,10 +2,13 @@ import {NotFoundError} from '../common/errors/not-found-error';
 import * as Enumerable from 'linq';
 import {IServiceGroup} from '../read-model/service-group';
 
+const inMemoryGroups: IServiceGroup[] = []
+
 export class ServiceGroupRepo {
     private groups: IServiceGroup[] = [];
 
-    constructor() {
+    constructor(groups?: IServiceGroup[]) {
+        this.groups = groups || inMemoryGroups;
     }
 
     create(group: IServiceGroup): IServiceGroup {

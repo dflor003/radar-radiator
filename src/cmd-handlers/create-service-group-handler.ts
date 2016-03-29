@@ -1,7 +1,6 @@
 import {CommandHandler, IDomainEvent} from '../infrastructure/cqrs/index';
 import {CreateServiceGroupCommand} from '../domain/commands/create-service-group-cmd';
 import {ServiceGroup} from '../domain/service-group';
-import {logger} from '../common/logger';
 
 export class CreateServiceGroupHandler extends CommandHandler {
     constructor() {

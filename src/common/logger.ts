@@ -1,4 +1,4 @@
-import * as colors from 'colors/safe';
+import * as colors from 'cli-color';
 import * as moment from 'moment';
 import * as Enumerable from 'linq';
 
@@ -19,19 +19,23 @@ export const AllLevels = [Levels.Trace, Levels.Debug, Levels.Log, Levels.Info, L
 export const DevLevels = AllLevels;
 export const ProdLevels = [Levels.Log, Levels.Info, Levels.Warn, Levels.Error];
 
-colors.setTheme({
-    trace: 'gray',
-    debug: 'gray',
-    log: 'white',
-    info: 'blue',
-    warn: 'yellow',
-    error: 'red',
-    logname: 'green',
-    timestamp: ['bold', 'blue']
-})
+export let LogColors = {
+    'trace': colors.white,
+    'debug': colors.white,
+    'log': colors.whiteBright,
+    'info': colors.cyan,
+    'warn': colors.yellow,
+    'error': colors.red,
+    'namespace': colors.green.bold,
+    'timestamp': colors.green.bold,
+};
 
 function colorize(color: string, text: string): string {
-    return colors[color].call(colors, text);
+    if (!LogColors[color]) {
+        throw new Error(`Missing color def for ${color}`);
+    }
+
+    return LogColors[color](text);
 }
 
 export class Logger {
@@ -42,7 +46,7 @@ export class Logger {
     static env = 'dev';
 
     private enabledLevels: {[level: string]: boolean;} = {};
-    private name: string = null;
+    private logNamespace: string = null;
 
     constructor(levels?: string[]) {
         levels = !levels || !levels.length ? Logger.defaultLevels[Logger.env] : levels;
@@ -52,13 +56,13 @@ export class Logger {
         }
     }
 
-    named(name: string): Logger {
+    namespace(name: string): Logger {
         let levels = Enumerable
             .from(this.enabledLevels)
             .select(x => x.key)
             .toArray();
         let logger = new Logger(levels);
-        logger.name = name;
+        logger.logNamespace = name;
         return logger;
     }
 
@@ -97,19 +101,19 @@ export class Logger {
 
     private logTo(logFunc: Function, level: string, args: any[]): void {
         if (!this.enabledLevels[level]) {
-            console.log(`Skipping level ${level}`);
             return;
         }
 
         let coloredArgs = args.map(arg => typeof arg === 'string' ? colorize(level, arg) : arg);
         let timestampText = moment().format('MM-DD-YYYY HH:mm:ss.SSS');
         let timestamp = colorize('timestamp', `[${timestampText}]`);
-        let logName = this.name ?  colorize('logname', `[${this.name}]`) : null;
+        let logNamespace = this.logNamespace ?  colorize('namespace', `[${this.logNamespace}]`) : null;
+        let levelName = colorize(level, `[${level.toUpperCase()}]`);
 
-        if (logName) {
-            logFunc.call(console, timestamp, logName, ...coloredArgs);
+        if (logNamespace) {
+            logFunc.call(console, timestamp, logNamespace, levelName, ...coloredArgs);
         } else {
-            logFunc.call(console, timestamp, ...coloredArgs);
+            logFunc.call(console, timestamp, levelName, ...coloredArgs);
         }
     }
 }

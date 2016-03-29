@@ -1,18 +1,21 @@
 import {Command} from './command';
 import {EventEmitter} from 'events';
-import {CommandHandlerRegistry} from "./command-registry";
+import {CommandHandlerRegistry} from './command-registry';
 import {Validate} from '../../common/validator';
-import {logger} from '../../common/logger';
+import {logger as mainLogger} from '../../common/logger';
+
+const logger = mainLogger.namespace('ES.CMD-BUS');
 
 export class CommandBus extends EventEmitter {
     private static _instance: CommandBus;
-    static EventsGeneratedEvent = 'events-generated';
-    static ErrorEvent = 'error';
 
+    // Constants for event emitter
+    static Events = {
+        EventsGenerated: 'events-generated',
+        Error: 'error'
+    };
 
-    constructor(){
-        super();
-    }
+    warnOnNoEvents = true;
 
     static get instance(): CommandBus {
         return CommandBus._instance || (CommandBus._instance = new CommandBus());
@@ -29,12 +32,17 @@ export class CommandBus extends EventEmitter {
             // Handle the command and capture any events it yields
             let events = await handler.handle(command);
 
+            // Usually processing commands yields at least one event. Warn if not the case.
+            if (!events.length && this.warnOnNoEvents) {
+                logger.warn(`WARNING! Command '${command.commandType}' yielded no events!`)
+            }
+
             // Emit those events to consumers
-            this.emit(CommandBus.EventsGeneratedEvent, events);
+            this.emit(CommandBus.Events.EventsGenerated, events);
         } catch(err) {
             // Emit error if one is thrown
             logger.error(`Failed processing command '${command.commandType}'`, err);
-            this.emit(CommandBus.ErrorEvent, err);
+            this.emit(CommandBus.Events.Error, err);
             throw err;
         }
     }
