@@ -10,7 +10,7 @@ import {Request, Response} from 'express';
 import {Utils} from './common/utils';
 import {esManager} from './infrastructure/cqrs/event-sourcing-manager';
 import {ServiceGroupModelListener} from './evt-listeners/service-group-model-listener';
-import {ServiceGroupCommandApi, ServiceGroupQueryApi} from './api/service-group-api';
+import {ServiceGroupApi} from './api/service-group-api';
 import {logger} from './common/logger';
 import {ServiceGroup} from './domain/service-group';
 import {CreateServiceGroupHandler, AddServiceHandler} from './cmd-handlers/service-group-handlers';
@@ -56,8 +56,7 @@ function start(workingDir?: string): void {
 
     // APIs
     let controllers = [
-        new ServiceGroupCommandApi(),
-        new ServiceGroupQueryApi(),
+        new ServiceGroupApi(),
     ];
     controllers.forEach(ctrl => app.use(ctrl.routes()));
 

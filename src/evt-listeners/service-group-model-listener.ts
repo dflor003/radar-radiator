@@ -14,7 +14,7 @@ export class ServiceGroupModelListener {
     }
 
     async handleCreated(evt: ServiceGroupCreatedEvent): Promise<void> {
-        this.repo.create({
+        await this.repo.create({
             id: evt.id,
             name: evt.name
         });

@@ -11,12 +11,12 @@ export class ServiceGroupRepo {
         this.groups = groups || inMemoryGroups;
     }
 
-    create(group: IServiceGroup): IServiceGroup {
+    async create(group: IServiceGroup): Promise<IServiceGroup> {
         this.groups.push(group);
         return group;
     }
 
-    update(group: IServiceGroup): void {
+    async update(group: IServiceGroup): Promise<void> {
         let index = this.groups.findIndex(grp => grp.id === group.id);
         if (index < 0) {
             throw new NotFoundError(`No tracking set with id ${group.id}`)
@@ -25,7 +25,7 @@ export class ServiceGroupRepo {
         this.groups[index] = group;
     }
 
-    delete(id: string): IServiceGroup {
+    async delete(id: string): Promise<IServiceGroup> {
         let index = this.groups.findIndex(grp => grp.id === id);
         let item  = this.groups[index];
         if (index >= 0) {
@@ -35,11 +35,11 @@ export class ServiceGroupRepo {
         return item || null;
     }
 
-    getAll(): IServiceGroup[] {
+    async getAll(): Promise<IServiceGroup[]> {
         return this.groups;
     }
 
-    getById(id: string): IServiceGroup {
+    async getById(id: string): Promise<IServiceGroup> {
         return Enumerable
             .from(this.groups)
             .firstOrDefault(group => group.id == id, null);

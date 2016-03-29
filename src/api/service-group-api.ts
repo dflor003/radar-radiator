@@ -7,6 +7,8 @@ import {NextFunction} from 'express';
 import {IServiceGroup} from '../evt-listeners/service-group-model-listener';
 import {ServiceGroupCommands, ICreateServiceGroupCommand} from '../cmd-handlers/service-group-commands';
 import * as express from 'express';
+import {Validate} from '../common/validator';
+import {NotFoundError} from '../common/errors/not-found-error';
 
 function handleErrors(handler: RequestHandler): RequestHandler {
     return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -18,11 +20,13 @@ function handleErrors(handler: RequestHandler): RequestHandler {
     }
 }
 
-export class ServiceGroupQueryApi {
+export class ServiceGroupApi {
     private repo: ServiceGroupRepo;
+    private bus: CommandBus;
 
-    constructor(repo: ServiceGroupRepo = new ServiceGroupRepo()) {
+    constructor(repo: ServiceGroupRepo = new ServiceGroupRepo(), bus: CommandBus = CommandBus.instance) {
         this.repo = repo;
+        this.bus = bus;
     }
 
     routes(): Router {
@@ -30,33 +34,26 @@ export class ServiceGroupQueryApi {
 
         router.get('/api/service-groups', handleErrors((req, res, next) => this.getServiceGroups(req, res, next)));
         router.get('/api/service-groups/:id', handleErrors((req, res, next) => this.getServiceGroupById(req, res, next)));
-
-        return router;
-    }
-
-    getServiceGroups(req: Request, res: Response, next: Function): void {
-        let groups = this.repo.getAll();
-        res.json(groups.map(group => toServiceGroupSummary(group)))
-    }
-
-    getServiceGroupById(req: Request, res: Response, next: Function): void {
-        res.status(HttpStatus.NotImplemented).send('');
-    }
-}
-
-export class ServiceGroupCommandApi {
-    private bus: CommandBus;
-
-    constructor(bus: CommandBus = CommandBus.instance) {
-        this.bus = bus;
-    }
-
-    routes(): Router {
-        let router = express.Router();
-
+        
         router.post('/api/service-groups', handleErrors((req, res) => this.createServiceGroup(req, res)));
 
         return router;
+    }
+
+    async getServiceGroups(req: Request, res: Response, next: Function): Promise<void> {
+        let groups = await this.repo.getAll();
+        res.json(groups.map(group => toServiceGroupSummary(group)))
+    }
+
+    async getServiceGroupById(req: Request, res: Response, next: Function): Promise<void> {
+        let id = Validate.notEmpty(req.param('id')),
+            group = await this.repo.getById(id);
+
+        if (!group) {
+            throw new NotFoundError(`No group with id ${id}`);
+        }
+
+        res.json(toServiceGroupSummary(group));
     }
 
     async createServiceGroup(req: Request, res: Response): Promise<void> {
@@ -66,6 +63,7 @@ export class ServiceGroupCommandApi {
         await this.bus.process<ICreateServiceGroupCommand>(ServiceGroupCommands.CreateServiceGroup, {
             name: name
         });
+        
         res.status(HttpStatus.Accepted).send(null);
     }
 }
