@@ -4,8 +4,10 @@
   "description": "Simple programmable build radiator.",
   "main": "src/server.js",
   "scripts": {
-    "clean": "rm -rf ./src/**/*.js",
-    "typings": "rm -rf typings && typings install",
+    "setup": "rm -rf ./node_modules && npm install && npm run clean && npm run typings && npm run build",
+    "clean": "echo Removing compiled TS files... && rm -rf ./src/**/*.js",
+    "build": "npm run clean && echo Compiling TypeScript files... && tsc -p .",
+    "typings": "rm -rf typings && echo Pulling TypeScript typings... && typings install",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node --harmony_destructuring --harmony_default_parameters --harmony_rest_parameters ./src/server.js"
   },
@@ -37,6 +39,7 @@
     "valid-url": "^1.0.9"
   },
   "devDependencies": {
+    "typescript": "^1.8.7",
     "typings": "^0.7.9"
   }
 }
